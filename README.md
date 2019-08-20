@@ -1,26 +1,31 @@
 <div align="center">
   <img src="/assets/logo.png" width="300" />
-  <p style="margin-top: 25px;">Plugin to add before and after hooks to POSTCSS.</p>
+  <p style="margin-top: 25px;">Plugin to add `preBuild` and `postBuild` hooks for global features.</p>
 
 [![Build Status](https://travis-ci.com/drolsen/postcss-in-out.svg?branch=master)](https://travis-ci.com/drolsen/postcss-in-out)
 [![dependencies Status](https://david-dm.org/drolsen/postcss-in-out/status.svg)](https://david-dm.org/drolsen/postcss-in-out)
 [![devDependencies Status](https://david-dm.org/drolsen/postcss-in-out/dev-status.svg)](https://david-dm.org/drolsen/postcss-in-out?type=dev)
 </div>
 
+### Why POSTCSSInOut
+The main idea of POSTCSSInOut is to finally bring a global context to developers! This helps with the following:
+
+- Can help to reduce needed postcss-plugins that help clean up non global context features.
+- Can help to reduce bundle size by work with features such as media query packing globally.
+- Simplifies the Postcss API usage for developers who assume their feature to be working in a global context.
+
+
 ### How it works
-POSTCSS is GREAT!
-POSTCSS is POWERFULL!
-POSTCSS is limited to per-file compilation scopes?
+By default Postcss compilations happen at a per-css-file context, not a global full-sheet context.
+This means you can't define variables, mixins, methods etc. to be global across your source css files.
 
-If you have ever tried to author your own POSTCSS plugins, you may have quickly noticed that although the compilations happens at a per file scope. This means you can't use variables, mixins or methods globally, without creating what some consider "rats nest" of imports statements across many CSS source CSS files.
+With POSTCSSInOut however, you are now offered both `preBuild` and `postBuild` context hooks! By leveraging these two context hooks, developers can define what custom (or community) Postcss plugins/features ought to be globally available to source css files.
 
-If you have ever wished for there was a way to run (or author) POSTCSS plugins/API over global sheet context, then this is the plugin for you!
+For instance, without POSTCSSInOut; sharing :root {} variables across two files would be done in one of two ways:
+- Create a file system hiarchy CSS of import order that emphasis variables first.
+- Import file A into file B, to use file A's variables within file B.
 
-Introducing POSTCSS In-Out!
-
-With this plugin, you now have the ability to define POSTCSS plugins in to what are called `preBuild` and `postBuild` webpack hooks.
-
-Everything in the `preBuild` configuration is sent along to the normal POSTCSS compilation POSTCSS (single file compilation scopes). While everything in the `postBuild` configuration hook, is processed after the normal POSTCSS over your entine compiled sheet providing a global scope to Plugins and API.
+With POSTCSSInOut, simply define community `postcss-variables` plugin to ran in the global context, and viola all variables declarations should be available globally to all src css files.
 
 ---
 
@@ -38,39 +43,175 @@ Import postcss-in-out into your Webpack configuration file:
 const POSTCSSInOut = require('postcss-in-out');
 ```
 
-Instantiate a new POSTCSSInOut() class within Webpack configuration's plugin array:
+Instantiate a `new POSTCSSInOut()` class within Webpack configuration's plugin array.
+Take note that in this setup below we have no `postcss-loader` being used in our rules; this is intentional:
 ```js
 module.exports = {
-  "plugins": [
-    new POSTCSSInOut()
+  module: {
+    rules: [
+      {
+        'test': /\.css$/,
+        'use': [
+          MiniCssExtractPlugin.loader, // (see: https://www.npmjs.com/package/mini-css-extract-plugin)
+          {
+            'loader': 'css-loader'     // (see: https://www.npmjs.com/package/css-loader)
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new POSTCSSInOut({
+      preBuild: [
+        // Postcss plugins added here gets compiled in a normal per-css-file context
+      ],
+      postBuild: [
+        // Postcss plugins added here gets compiled in a global css file context
+      ]
+    }),
+    new MiniCssExtractPlugin({
+      filename: `basic/[name].css`,
+      chunkFilename: './[name].css'
+    })    
+  ]
+};
+```
+In the above configuration, we hands-over the `postcss-loader` configuration to POSTCSSInOut and only focus on the plugin and features we want ran.
+
+However, to maintain full control over the `postcss-loader` configuration, you can pass it instead of an array:
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        'test': /\.css$/,
+        'use': [
+          MiniCssExtractPlugin.loader, // (see: https://www.npmjs.com/package/mini-css-extract-plugin)
+          {
+            'loader': 'css-loader'     // (see: https://www.npmjs.com/package/css-loader)
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new POSTCSSInOut({
+      preBuild: {
+        'loader': 'postcss-loader', // (see: https://www.npmjs.com/package/postcss-loader)
+        'options': {
+          'ident': 'postcss',
+          'plugins': (loader) => [
+            // Postcss plugins added here gets compiled in a normal per-css-file context
+          ]
+        }
+      },
+      postBuild: [
+        // Postcss plugins added here gets compiled in a global css file context
+      ]
+    }),
+    new MiniCssExtractPlugin({
+      filename: `basic/[name].css`,
+      chunkFilename: './[name].css'
+    })    
+  ]
+};
+```
+Please take note that the above example has the `postcss-loader` configuration living the the POSTCSSInOut plugin, not the module.rules object. This is intentional and core to how POSTCSSInOut works.
+
+Thats it!
+
+
+### Migrating to POSTCSSInOut
+This is a typical setup for Postcss and webpack:
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        'test': /\.css$/,
+        'use': [
+          MiniCssExtractPlugin.loader, // (see: https://www.npmjs.com/package/mini-css-extract-plugin)
+          {
+            'loader': 'css-loader'     // (see: https://www.npmjs.com/package/css-loader)
+          },
+          {
+          'loader': 'postcss-loader',  // (see: https://www.npmjs.com/package/postcss-loader)
+          'options': {
+            'ident': 'postcss',
+            'plugins': (loader) => [
+              // Postcss plugins added here gets compiled in a normal per-css-file context
+            ]
+          }          
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: `basic/[name].css`,
+      chunkFilename: './[name].css'
+    })    
   ]
 };
 ```
 
-Then, within your CSS module rule for POSTCSS, add the `preBuild` and `postBuild` hooks:
+- MiniCSSExtractPlugin helps write our bundled CSS to disk and name the file
+- css-loader helps webpack parse CSS syntax during build
+- postcss-loader helps webpack parse CSS over Postcss API
 
+Here is that same setup, but now using POSTCSSInOut:
 ```js
-'test': /\.css$/,
-'use': [
-  {
-    'loader': 'postcss-loader', // (see: https://www.npmjs.com/package/postcss-loader)
-    'options': {
-      'ident': 'postcss',
-      'plugins': (loader) => [
-        preBundle: [
-          // all plugins you wish to run in normal per-file compilation scopes
-        ],
-        postBundle: [
-          // all plugins / api you wish to run in a global sheet compilation scope
+module.exports = {
+  module: {
+    rules: [
+      {
+        'test': /\.css$/,
+        'use': [
+          MiniCssExtractPlugin.loader, // (see: https://www.npmjs.com/package/mini-css-extract-plugin)
+          {
+            'loader': 'css-loader'     // (see: https://www.npmjs.com/package/css-loader)
+          }
         ]
+      }
+    ]
+  },
+  plugins: [
+    new POSTCSSInOut({
+      preBuild: {
+        'loader': 'postcss-loader', // (see: https://www.npmjs.com/package/postcss-loader)
+        'options': {
+          'ident': 'postcss',
+          'plugins': (loader) => [
+            // Postcss plugins added here gets compiled in a normal per-css-file context
+          ]
+        }
+      },
+      postBuild: [
+        // Postcss plugins added here gets compiled in a global css file context
       ]
-    }
-  }
-]
+    }),
+    new MiniCssExtractPlugin({
+      filename: `basic/[name].css`,
+      chunkFilename: './[name].css'
+    })    
+  ]
+};
 ```
-
-Thats it!
+The only difference is the location of the `postcss-loader` configuration being in POSTCSSInOut instead of module.rules.
 
 ---
 
 ### Tests
+
+POSTCSSInOut comes with a number of tests found under `/test`.
+These are here to help you better understand the expectations of this plugin's configuration(s).
+
+Simply run `npm run test` or `yarn test` from the root of the plugin to run all tests. Running a test will produce `/dist/[test]` directories.
+
+If you would like to change a test, update the root package.json file's `test` script to use any of the `/test/*.test.config.js` files.
+
+- `basic.test.config.js` = Demonstrates the basic POSTCSSInOut configuration.
+- `custom.test.config.js` = Demonstrates the custom POSTCSSInOut postcss-loader configuration.
+

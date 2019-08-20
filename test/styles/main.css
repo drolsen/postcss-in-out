@@ -1,0 +1,16 @@
+@import url('//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Merriweather:100,300,400,700');
+
+body {
+	background-color: var(--bg-color);
+	color: var(--text-color);
+
+	@media (--large) {
+		background-color: var(--text-color);
+		color: var(--bg-color);
+	}
+
+	strong {
+		font-weight: var(--weight);
+		font-size: var(--size);
+	}
+}
