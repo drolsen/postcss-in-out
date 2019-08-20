@@ -8,7 +8,8 @@
 </div>
 
 ### Why PostCSSInOut
-The main idea of PostCSSInOut is to finally bring a global context to PostCSS and developers! This helps with the following:
+The main idea of PostCSSInOut is to finally bring a global context to PostCSS and developers!
+This helps with the following:
 
 - Can help to reduce required PostCSS clean up plugins.
 - Can help to reduce CSS bundle sizes.
@@ -16,11 +17,11 @@ The main idea of PostCSSInOut is to finally bring a global context to PostCSS an
 
 ### How it works
 By default PostCSS compilations happen at a per-css-file context, not a global full-sheet context.
-This means you can't define variables, mixins, methods etc. to be global across your source css files.
+This means you can't define variables, mixins, methods etc. to be used global across all your source css files.
 
 With PostCSSInOut however, you are now offered both `preBuild` and `postBuild` context hooks! By leveraging these two context hooks, developers can define what custom (or community) PostCSS plugins/features ought to be globally available to source css files.
 
-For instance, without PostCSSInOut; sharing :root {} variables across two files would be done in one of two ways:
+For instance, without PostCSSInOut; sharing `:root {...}` variables across two files would be done in one of two ways:
 - Create a file system hierarchy CSS of import order that emphasis variables first.
 - Import file A into file B, to use file A's variables within file B.
 
