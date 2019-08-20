@@ -1,6 +1,6 @@
 <div align="center">
   <img src="/assets/logo.png" width="300" />
-  <p style="margin-top: 25px;">Plugin to add `preBuild` and `postBuild` hooks for global features.</p>
+  <p style="margin-top: 25px;">Plugin to add pre and post build hooks to PostCSS for global features.</p>
 
 [![Build Status](https://travis-ci.com/drolsen/postcss-in-out.svg?branch=master)](https://travis-ci.com/drolsen/postcss-in-out)
 [![dependencies Status](https://david-dm.org/drolsen/postcss-in-out/status.svg)](https://david-dm.org/drolsen/postcss-in-out)
