@@ -10,10 +10,9 @@
 ### Why PostCSSInOut
 The main idea of PostCSSInOut is to finally bring a global context to PostCSS and developers! This helps with the following:
 
-- Can help to reduce needed postcss-plugins that help clean up non global context features.
-- Can help to reduce bundle size by work with features such as media query packing globally.
-- Simplifies the PostCSS API usage for developers who assume their feature to be working in a global context.
-
+- Can help to reduce required PostCSS clean up plugins.
+- Can help to reduce CSS bundle sizes.
+- Can help to simplify PostCSS API usage / development.
 
 ### How it works
 By default PostCSS compilations happen at a per-css-file context, not a global full-sheet context.
