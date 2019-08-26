@@ -1,36 +1,36 @@
 {
-	"name": "postcss-in-out",
-	"version": "1.0.0",
-	"description": "Plugin to add before and after hooks to POSTCSS",
-	"repository": "drolsen/postcss-in-out",
-	"bugs": {
-		"url": "https://github.com/drolsen/postcss-in-out/issues"
-	},
-	"keywords": [
-		"postcss",
-		"webpack"
-	],
-	"author": "Devin R. Olsen <devin@devinrolsen.com> (http://devinrolsen.com)",
-	"license": "MIT",
-	"scripts": {
-		"test": "npm run basic-test && npm run custom-test",
-		"basic-test": "webpack --config ./test/basic.test.config.js --mode production",
-		"custom-test": "webpack --config ./test/custom.test.config.js --mode production"
-	},
-	"engines": {
-		"node": ">=10.15.1"
-	},
-	"devDependencies": {
-		"clean-webpack-plugin": "^3.0.0",
-		"css-loader": "^3.2.0",
-		"mini-css-extract-plugin": "^0.8.0",
-		"postcss-import": "^12.0.1",
-		"postcss-nested": "^4.1.2",
-		"webpack": "^4.39.2",
-		"webpack-cli": "^3.3.7"
-	},
-	"dependencies": {
-		"postcss": "^7.0.17",
-		"postcss-loader": "^3.0.0"
-	}
+  "name": "postcss-in-out",
+  "keywords": [
+    "postcss",
+    "webpack"
+  ],
+  "version": "1.0.1",
+  "description": "Plugin to add pre & post build hooks for global POSTCSS features",
+  "repository": "drolsen/postcss-in-out",
+  "bugs": {
+    "url": "https://github.com/drolsen/postcss-in-out/issues"
+  },
+  "author": "Devin R. Olsen <devin@devinrolsen.com> (http://devinrolsen.com)",
+  "license": "MIT",
+  "scripts": {
+    "test": "npm run basic-test && npm run custom-test",
+    "basic-test": "webpack --config ./test/basic.test.config.js --mode production",
+    "custom-test": "webpack --config ./test/custom.test.config.js --mode production"
+  },
+  "engines": {
+    "node": ">=10.15.1"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.2.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "postcss-import": "^12.0.1",
+    "postcss-nested": "^4.1.2",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7"
+  },
+  "dependencies": {
+    "postcss": "^7.0.17",
+    "postcss-loader": "^3.0.0"
+  }
 }

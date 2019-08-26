@@ -1,6 +1,6 @@
 <div align="center">
   <img src="/assets/logo.png" width="300" />
-  <p style="margin-top: 25px;">Plugin to add pre and post build hooks to PostCSS for global features.</p>
+  <p style="margin-top: 25px;">Plugin to add pre & post build hooks for global POSTCSS features.</p>
 
 [![Build Status](https://travis-ci.com/drolsen/postcss-in-out.svg?branch=master)](https://travis-ci.com/drolsen/postcss-in-out)
 [![dependencies Status](https://david-dm.org/drolsen/postcss-in-out/status.svg)](https://david-dm.org/drolsen/postcss-in-out)
@@ -11,21 +11,22 @@
 The main idea of PostCSSInOut is to finally bring a global context to PostCSS and developers!
 This helps with the following:
 
-- Can help to reduce required PostCSS clean up plugins.
-- Can help to reduce CSS bundle sizes.
-- Can help to simplify PostCSS API usage / development.
+- Helps reduce PostCSS clean up plugins needs
+- Helps reduce CSS bundle sizes
+- Helps simplify PostCSS API usage
 
 ### How it works
-By default PostCSS compilations happen at a per-css-file context, not a global full-sheet context.
-This means you can't define variables, mixins, methods etc. to be used global across all your source css files.
+PostCSS compilations happen at a per-css-file context, not a global full-sheet context.
+This means developers can't define global variables, mixins, methods etc. to be used across all your source files.
 
-With PostCSSInOut however, you are now offered both `preBuild` and `postBuild` context hooks! By leveraging these two context hooks, developers can define what custom (or community) PostCSS plugins/features ought to be globally available to source css files.
+With PostCSSInOut developers are now offered both `preBuild` and `postBuild` context hooks!
+By leveraging these two hooks, developers can define what custom (or community) plugins & features ought to be available globally to source CSS files.
 
-For instance, without PostCSSInOut; sharing `:root {...}` variables across two files would be done in one of two ways:
-- Create a file system hierarchy CSS of import order that emphasis variables first.
-- Import file A into file B, to use file A's variables within file B.
+For instance; without PostCSSInOut, sharing `:root {...}` variables across two files would be done in one of two ways:
+- Create a CSS file system hierarchy of `@import` order that emphasizes variables first.
+- `@import` file `A.css` into file `B.css`, to use file `A.css` variables within file `B.css`.
 
-With PostCSSInOut, simply define community `postcss-variables` plugin to ran in the global context, and viola all variables declarations should be available globally to all src css files.
+With PostCSSInOut however, developers can define `postcss-variables` community plugin to be ran in the `postBuild` hook, and all variables declarations will be available globally without anymore `@import` needs.
 
 ---
 
@@ -37,7 +38,7 @@ npm i --save-dev postcss-in-out
 yarn add --dev postcss-in-out
 ```
 
-### Webpack Config
+### Configuration
 Import postcss-in-out into your Webpack configuration file:
 ```js
 const PostCSSInOut = require('postcss-in-out');
@@ -47,19 +48,6 @@ Instantiate a `new PostCSSInOut()` class within Webpack configuration's plugin a
 Take note that in this setup below we have no `postcss-loader` being used in our rules; this is intentional:
 ```js
 module.exports = {
-  module: {
-    rules: [
-      {
-        'test': /\.css$/,
-        'use': [
-          MiniCssExtractPlugin.loader, // (see: https://www.npmjs.com/package/mini-css-extract-plugin)
-          {
-            'loader': 'css-loader'     // (see: https://www.npmjs.com/package/css-loader)
-          }
-        ]
-      }
-    ]
-  },
   plugins: [
     new PostCSSInOut({
       preBuild: [
@@ -68,62 +56,16 @@ module.exports = {
       postBuild: [
         // Postcss plugins added here gets compiled in a global css file context
       ]
-    }),
-    new MiniCssExtractPlugin({
-      filename: `basic/[name].css`,
-      chunkFilename: './[name].css'
     })    
   ]
 };
 ```
-In the above configuration, we hands-over the `postcss-loader` configuration to PostCSSInOut and only focus on the plugin and features we want ran.
-
-However, to maintain full control over the `postcss-loader` configuration, you can pass it instead of an array:
-
-```js
-module.exports = {
-  module: {
-    rules: [
-      {
-        'test': /\.css$/,
-        'use': [
-          MiniCssExtractPlugin.loader, // (see: https://www.npmjs.com/package/mini-css-extract-plugin)
-          {
-            'loader': 'css-loader'     // (see: https://www.npmjs.com/package/css-loader)
-          }
-        ]
-      }
-    ]
-  },
-  plugins: [
-    new PostCSSInOut({
-      preBuild: {
-        'loader': 'postcss-loader', // (see: https://www.npmjs.com/package/postcss-loader)
-        'options': {
-          'ident': 'postcss',
-          'plugins': (loader) => [
-            // Postcss plugins added here gets compiled in a normal per-css-file context
-          ]
-        }
-      },
-      postBuild: [
-        // Postcss plugins added here gets compiled in a global css file context
-      ]
-    }),
-    new MiniCssExtractPlugin({
-      filename: `basic/[name].css`,
-      chunkFilename: './[name].css'
-    })    
-  ]
-};
-```
-Please take note that the above example has the `postcss-loader` configuration living the the PostCSSInOut plugin, not the module.rules object. This is intentional and core to how PostCSSInOut works.
 
 Thats it!
 
 
 ### Migrating to PostCSSInOut
-This is a typical setup for PostCSS and Webpack:
+This is a typical configuration setup for CSS files being bundled with PostCSS and Webpack:
 
 ```js
 module.exports = {
@@ -157,11 +99,8 @@ module.exports = {
 };
 ```
 
-- `MiniCSSExtractPlugin` helps write our bundled CSS to disk and name the file
-- `css-loader` helps Webpack parse CSS syntax during build
-- `postcss-loader` helps Webpack parse CSS over PostCSS API
-
 Here is that same setup, but now using PostCSSInOut:
+
 ```js
 module.exports = {
   module: {
@@ -199,7 +138,8 @@ module.exports = {
   ]
 };
 ```
-The only difference is the location of the `postcss-loader` configuration being in PostCSSInOut instead of module.rules.
+
+The only difference is the location of the `postcss-loader` no living in PostCSSInOut instead of module.rules. **Note: The above example is for if you prefer to still retain configuration control over `postcss-loader`; if not simply define `preBuild: [...]` as an array of plugins instead.**
 
 ---
 
