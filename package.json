@@ -2,9 +2,13 @@
   "name": "postcss-in-out",
   "keywords": [
     "postcss",
-    "webpack"
+    "global",
+    "hooks",
+    "postcss global",
+    "postcss global variables",
+    "postcss global features"
   ],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Plugin to add pre & post build hooks for global POSTCSS features",
   "repository": "drolsen/postcss-in-out",
   "bugs": {
