@@ -61,7 +61,7 @@ class POSTCSSInOut {
 
     // Processes full bundled css sheets over our postBundle plugins
     if (this.options.postBuild) {
-      compiler.hooks.emit.tap('POSTCSSInOut', compilation => {
+      compiler.hooks.shouldEmit.tap('POSTCSSInOut', compilation => {
         Object.keys(compilation.assets).map((i) => {
           if (i.indexOf('.css') !== -1) {
             this.process(compilation.assets[i]._source.children, (results) => {
@@ -69,6 +69,8 @@ class POSTCSSInOut {
             });
           }
         });
+
+        return true;
       });
     } else {
       console.log('WARNING: POSTCSSInOut has no postBuild configuration. If you plan on not using the postBuild feature of POSTCSSInOut, it might be wise to use a default POSTCSS webpack instead.')
