@@ -66,8 +66,8 @@ class POSTCSSInOut {
       compiler.hooks.shouldEmit.tap('POSTCSSInOut', compilation => {
         Object.keys(compilation.assets).map((i) => {
           if (i.indexOf('.css') !== -1) {
-            this.process(compilation.assets[i]._source.children, (results) => {
-              compilation.assets[i]._source.children = [results];
+            this.process(compilation.assets[i]._source._children, (results) => {
+              compilation.assets[i]._source._children = [results];
             });
           }
         });
