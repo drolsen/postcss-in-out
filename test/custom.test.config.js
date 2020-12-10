@@ -39,10 +39,12 @@ const config = {
       preBuild: {
         'loader': 'postcss-loader', // (see: https://www.npmjs.com/package/postcss-loader)
         'options': {
-          'ident': 'postcss',
-          'plugins': (loader) => [
-            POSTCSSImports(),        // compiles down nesting per css file, not globally
-          ]
+          'postcssOptions': {
+            'ident': 'postcss',
+            'plugins': [
+              POSTCSSImports(),        // compiles down nesting per css file, not globally
+            ]
+          }
         }
       },
       postBuild: [
