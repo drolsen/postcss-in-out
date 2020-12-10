@@ -38,14 +38,16 @@ class POSTCSSInOut {
                 {
                   'loader': 'postcss-loader', // (see: https://www.npmjs.com/package/postcss-loader)
                   'options': {
-                    'ident': 'postcss',
-                    'plugins': (loader) => [
-                      ...this.options.preBuild
-                    ]
+                    'postcssOptions': {
+                      'ident': 'postcss',
+                      'plugins': [
+                        ...this.options.preBuild
+                      ]
+                    }
                   }
                 }
               )
-            } else if (typeof this.options.preBuild === 'object') {
+            } else if (this.options.preBuild.loader) {
               // Allowing developers to pass their own postcss-loader configuation / plugins
               rule.use.push(this.options.preBuild);
             } else {
