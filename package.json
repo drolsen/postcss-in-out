@@ -8,7 +8,7 @@
     "postcss global variables",
     "postcss global features"
   ],
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Plugin to add pre & post build hooks for global POSTCSS features",
   "repository": "drolsen/postcss-in-out",
   "bugs": {
@@ -22,7 +22,7 @@
     "custom-test": "webpack --config ./test/custom.test.config.js --mode production"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=14.17.0"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",

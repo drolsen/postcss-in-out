@@ -5,7 +5,7 @@ const variables = (options = {}) => {
   const variables = [];
   return {
     postcssPlugin: 'postcss-variables',
-    Once (root) {
+    Once (root, { result }) {
       const extractVariables = (value) => {
         value = value.split(' ');
         return Object.keys(value).map(index => {
@@ -78,7 +78,7 @@ const media = (options = {}) => {
 
   return {
     postcssPlugin: 'postcss-media',
-    Once (root) {
+    Once (root, { result }) {
       // collect all possible breakpoints
       root.walkDecls(decl => {
         const value = decl.value;
@@ -136,7 +136,7 @@ const rems = (options = {}) => {
 
   return {
     postcssPlugin: 'postcss-rems',
-    Once (root) {
+    Once (root, { result }) {
       root.walkDecls(decls => {
         if (decls.value.indexOf('rem(') !== -1) {
           let occurances = decls.value.match(/rem\(.*?\)/g);
@@ -155,7 +155,7 @@ const roots = (options = {}) => {
 
   return {
     postcssPlugin: 'postcss-roots',
-    Once (root) {
+    Once (root, { result }) {
       root.walkRules(':root', rule => {
         // we never remove color root for guide purposes
         // if (typeof rule === 'undefined') { return false; }

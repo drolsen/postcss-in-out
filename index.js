@@ -1,4 +1,5 @@
 const POSTCSS = require('postcss');
+const { sources } = require('webpack');
 
 class POSTCSSInOut {
   constructor(options) {
@@ -63,20 +64,34 @@ class POSTCSSInOut {
 
     // Processes full bundled css sheets over our postBundle plugins
     if (this.options.postBuild) {
-      compiler.hooks.shouldEmit.tap('POSTCSSInOut', compilation => {
-        Object.keys(compilation.assets).map((i) => {
-          if (i.indexOf('.css') !== -1) {
-            this.process(compilation.assets[i]._source._children, (results) => {
-              compilation.assets[i]._source._children = [results];
+      compiler.hooks.compilation.tap({ name: 'POSTCSSInOut' }, (compilation) => {
+        compilation.hooks.processAssets.tap(
+          {
+            name: 'POSTCSSInOut',
+            stage: compilation.PROCESS_ASSETS_STAGE_ADDITIONS, // see below for more stages
+            additionalAssets: true
+          },
+          (assets) => {
+            Object.keys(assets).map((i) => {
+              if (i.indexOf('.css') !== -1) {
+                this.process(assets[i]._source._children, (results) => {
+                  assets[i]._source._children = [];
+
+                  compilation.updateAsset(
+                    i,
+                    new sources.RawSource(
+                      results
+                    )
+                  );                  
+                });
+              }
             });
           }
-        });
-
-        return true;
+        )
       });
     } else {
       console.log('WARNING: POSTCSSInOut has no postBuild configuration. If you plan on not using the postBuild feature of POSTCSSInOut, it might be wise to use a default POSTCSS webpack instead.')
-    }    
+    }
   }
 }
 
