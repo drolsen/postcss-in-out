@@ -6,7 +6,7 @@ class POSTCSSInOut {
     this.options = options;
   }
 
-  process(children, callback) {
+  processPostBuild(children, callback) {
     const collection = Object.keys(children).map((j) => {
       let child = children[j];
       if (typeof child === 'object') {
@@ -68,21 +68,13 @@ class POSTCSSInOut {
         compilation.hooks.processAssets.tap(
           {
             name: 'POSTCSSInOut',
-            stage: compilation.PROCESS_ASSETS_STAGE_ADDITIONS, // see below for more stages
-            additionalAssets: true
+            stage: compilation.PROCESS_ASSETS_STAGE_ADDITIONS // see below for more stages
           },
           (assets) => {
             Object.keys(assets).map((i) => {
               if (i.indexOf('.css') !== -1) {
-                this.process(assets[i]._source._children, (results) => {
-                  assets[i]._source._children = [];
-
-                  compilation.updateAsset(
-                    i,
-                    new sources.RawSource(
-                      results
-                    )
-                  );                  
+                this.processPostBuild(assets[i]._source._children, (results) => {
+                  compilation.updateAsset(i, new sources.RawSource(results));
                 });
               }
             });
