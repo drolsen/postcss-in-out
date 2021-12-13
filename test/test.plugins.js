@@ -99,8 +99,8 @@ const media = (options = {}) => {
           if (key === variable) {
             rule.params = queries[key];
 
-            // gather meida queries inners
-            rule.walkRules(innerRules => {
+            // gather media queries inners
+            root.walkRules(innerRules => {
               let stringSelector = `  ${innerRules.selector} {\n`;
               innerRules.walkDecls(innerDecl => {
                   stringSelector += `    ${innerDecl.prop}: ${innerDecl.value};\n`;
