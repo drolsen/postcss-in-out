@@ -1,5 +1,5 @@
 const POSTCSS = require('postcss');
-const { sources } = require('webpack');
+const { sources, Compilation } = require('webpack');
 
 class POSTCSSInOut {
   constructor(options) {
@@ -68,16 +68,16 @@ class POSTCSSInOut {
         compilation.hooks.processAssets.tap(
           {
             name: 'POSTCSSInOut',
-            stage: compilation.PROCESS_ASSETS_STAGE_ADDITIONS // see below for more stages
+            stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS // see below for more stages
           },
           (assets) => {
-            Object.keys(assets).map((i) => {
+            for (let i in assets) {
               if (i.indexOf('.css') !== -1) {
                 this.processPostBuild(assets[i]._source._children, (results) => {
                   compilation.updateAsset(i, new sources.RawSource(results));
                 });
               }
-            });
+            }
           }
         )
       });
